@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 
-// GET request
 export async function GET() {
     try {
         const { data: stories } = await supabase
@@ -11,8 +10,6 @@ export async function GET() {
             .order('created_at', { ascending: false })
 
         return NextResponse.json(stories)
-        // or with custom status:
-        // return NextResponse.json(users, { status: 200 })
     } catch (error) {
         return NextResponse.json(
             { error: 'Failed to fetch users' },
