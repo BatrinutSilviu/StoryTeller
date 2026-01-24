@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+   url      = env("DATABASE_URL")
+}
+
+model Stories {
+  id        Int      @id @default(autoincrement())
+  story_series_id Int?
+  created_at DateTime @default(now())
+  @@map("Stories")
+}
+
+model Profiles {
+  id        Int      @id @default(autoincrement())
+  user_id Int
+  name String
+  age Int
+  gender Boolean
+  created_at DateTime @default(now())
+  profileCategories ProfileCategories[]
+
+  @@map("Profiles")
+}
+
+model Categories {
+  id        Int      @id @default(autoincrement())
+  name String
+  created_at DateTime @default(now())
+  profileCategories ProfileCategories[]
+
+  @@map("Categories")
+}
+
+model ProfileCategories {
+  id        Int      @id @default(autoincrement())
+  profile_id Int
+  category_id Int
+  created_at DateTime @default(now())
+  profile  Profiles   @relation(fields: [profile_id], references: [id])
+  category Categories @relation(fields: [category_id], references: [id])
+
+  @@map("Profile_Categories")
+}
