@@ -1,13 +1,9 @@
 import { NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import {prisma} from "@/lib/prisma";
 
 export async function GET() {
     try {
-        const { data: stories } = await supabase
-            .from('Stories')
-            .select('*')
-            .limit(5)
-            .order('created_at', { ascending: false })
+        const stories = await prisma.stories.findMany()
 
         return NextResponse.json(stories)
     } catch (error) {

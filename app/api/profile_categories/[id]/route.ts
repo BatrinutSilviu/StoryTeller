@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import {prisma} from "@/lib/prisma";
 
 export async function GET(
     request: Request,
@@ -7,27 +7,39 @@ export async function GET(
 ) {
     try {
         const { id } = await params
+        const profileId = parseInt(id, 10)
+        const profileCategories = await prisma.profileCategories.findMany({
+            where: {
+                profile_id : profileId
+            },
+            select: {
+                id: true,
+                category: {
+                    select: {
+                        id: true,
+                        name: true
+                    }
+                },
+                profile: {
+                    select: {
+                        id: true,
+                        user_id: true,
+                        name: true,
+                        age: true,
+                        gender: true
+                    }
+                }
+            }
+        })
 
-        console.log('Fetching profile with ID:', id)
-
-        const { data: profile, error } = await supabase
-            .from('Profile_Categories')
-            .select('*')
-            .eq('profile_id', id)
-
-        if (error) {
-            console.error('Supabase error:', error)
-            throw error
-        }
-
-        if (!profile) {
+        if (!profileCategories) {
             return NextResponse.json(
                 { error: 'Profile not found' },
                 { status: 404 }
             )
         }
 
-        return NextResponse.json(profile)
+        return NextResponse.json(profileCategories)
     } catch (error) {
         console.error('Route error:', error)
         return NextResponse.json(
