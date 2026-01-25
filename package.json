@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "prebuild": "ls -la && ls -la scripts/ && node ./scripts/generate-swagger.js",
+    "prebuild": "node ./scripts/generate-swagger.ts",
     "postinstall": "prisma generate"
   },
   "dependencies": {
