@@ -3,19 +3,19 @@ import {prisma} from "@/lib/prisma";
 
 /**
  * @swagger
- * /api/profiles/{user_id}:
+ * /api/stories/{story_id}/categories:
  *   get:
  *     summary: Gets a profile
  *     description: Returns all info associated with a specific profile
  *     tags:
- *       - Profiles
+ *       - Stories
  *     parameters:
  *       - in: path
- *         name: user_id
+ *         name: story_id
  *         required: true
  *         schema:
  *           type: integer
- *         description: The user ID
+ *         description: The story ID
  *     responses:
  *       200:
  *         description: Successful response
@@ -52,29 +52,31 @@ export async function GET(
 ) {
     try {
         const { id } = await params
-        const userId = parseInt(id, 10)
+        const storyId = parseInt(id, 10)
 
-        const profiles = await prisma.profiles.findMany({
+        const storyCategories = await prisma.storyCategories.findMany({
             where: {
-                user_id : userId
+                story_id : storyId
             },
             select: {
                 id: true,
-                user_id: true,
-                name: true,
-                age: true,
-                gender: true
+                category: {
+                    select: {
+                        id: true,
+                        name: true
+                    }
+                },
             }
         })
 
-        if (!profiles) {
+        if (!storyCategories) {
             return NextResponse.json(
                 { error: 'Profile not found' },
                 { status: 404 }
             )
         }
 
-        return NextResponse.json(profiles)
+        return NextResponse.json(storyCategories)
     } catch (error) {
         console.error('Route error:', error)
         return NextResponse.json(

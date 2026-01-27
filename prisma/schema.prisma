@@ -11,6 +11,9 @@ model Stories {
   id        Int      @id @default(autoincrement())
   story_series_id Int?
   created_at DateTime @default(now())
+  storyCategories StoryCategories[]
+  storyTranslations StoryTranslations[]
+
   @@map("Stories")
 }
 
@@ -31,8 +34,19 @@ model Categories {
   name String
   created_at DateTime @default(now())
   profileCategories ProfileCategories[]
+  storyCategories StoryCategories[]
 
   @@map("Categories")
+}
+
+model Languages {
+  id        Int      @id @default(autoincrement())
+  name String
+  country_code String
+  created_at DateTime @default(now())
+  storyTranslations StoryTranslations[]
+
+  @@map("Languages")
 }
 
 model ProfileCategories {
@@ -44,4 +58,41 @@ model ProfileCategories {
   category Categories @relation(fields: [category_id], references: [id])
 
   @@map("Profile_Categories")
+}
+
+model StoryCategories {
+  id        Int      @id @default(autoincrement())
+  story_id Int
+  category_id Int
+  created_at DateTime @default(now())
+  story  Stories   @relation(fields: [story_id], references: [id])
+  category Categories @relation(fields: [category_id], references: [id])
+
+  @@map("Story_Categories")
+}
+
+model StoryPages {
+  id        Int      @id @default(autoincrement())
+  page_number Int
+  story_translation_id Int
+  text_content String
+  created_at DateTime @default(now())
+  storyTranslation StoryTranslations @relation(fields: [story_translation_id], references: [id])
+
+  @@map("Story_Pages")
+}
+
+model StoryTranslations {
+  id        Int      @id @default(autoincrement())
+  story_id Int
+  language_id Int
+  title String
+  audio_link String
+  created_at DateTime @default(now())
+  language Languages @relation(fields: [language_id], references: [id])
+  story Stories @relation(fields: [story_id], references: [id])
+
+  storyPages StoryPages[]
+
+  @@map("Story_Translations")
 }

@@ -24,7 +24,6 @@ const spec = createSwaggerSpec({
     },
 })
 
-// Save to public folder
 fs.writeFileSync(
     path.join(__dirname, '../public/swagger.json'),
     JSON.stringify(spec, null, 2)
