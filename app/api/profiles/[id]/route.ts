@@ -6,8 +6,7 @@ import { createClient } from '@/lib/supabase-server'
  * @swagger
  * /api/profiles/{user_id}:
  *   get:
- *     summary: Gets a profile
- *     description: Returns all info associated with a specific profile
+ *     summary: Gets all the profiles of an user
  *     tags:
  *       - Profiles
  *     parameters:
@@ -55,12 +54,12 @@ export async function GET(
         const supabase = await createClient()
         const { data: { user }, error: authError } = await supabase.auth.getUser()
 
-        if (authError || !user) {
-            return NextResponse.json(
-                { error: 'Unauthorized' },
-                { status: 401 }
-            )
-        }
+        // if (authError || !user) {
+        //     return NextResponse.json(
+        //         { error: 'Unauthorized' },
+        //         { status: 401 }
+        //     )
+        // }
 
         const { id } = await params
         const userId = parseInt(id, 10)

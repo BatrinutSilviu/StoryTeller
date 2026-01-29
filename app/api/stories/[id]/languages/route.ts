@@ -3,10 +3,9 @@ import {prisma} from "@/lib/prisma";
 
 /**
  * @swagger
- * /api/stories/{story_id}/translations:
+ * /api/stories/{story_id}/languages:
  *   get:
- *     summary: Gets a profile
- *     description: Returns all info associated with a specific profile
+ *     summary: Gets all the languages of a story
  *     tags:
  *       - Stories
  *     parameters:

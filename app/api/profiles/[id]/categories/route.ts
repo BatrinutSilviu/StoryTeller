@@ -5,8 +5,7 @@ import {prisma} from "@/lib/prisma";
  * @swagger
  * /api/profiles/{profile_id}/categories:
  *   get:
- *     summary: Gets the categories from a profile
- *     description: Returns all categories associated with a specific profile
+ *     summary: Gets all the categories of a profile
  *     tags:
  *       - Profiles
  *     parameters:
@@ -52,10 +51,11 @@ export async function GET(
 ) {
     try {
         const { id } = await params
-        const profileId = parseInt(id, 10)
+        const profileIdParsed = parseInt(id, 10)
+
         const profileCategories = await prisma.profileCategories.findMany({
             where: {
-                profile_id : profileId
+                profile_id : profileIdParsed
             },
             select: {
                 id: true,
@@ -65,15 +65,6 @@ export async function GET(
                         name: true
                     }
                 },
-                profile: {
-                    select: {
-                        id: true,
-                        user_id: true,
-                        name: true,
-                        age: true,
-                        gender: true
-                    }
-                }
             }
         })
 

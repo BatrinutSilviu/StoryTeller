@@ -5,8 +5,7 @@ import {prisma} from "@/lib/prisma";
  * @swagger
  * /api/stories/{story_id}/categories:
  *   get:
- *     summary: Gets a profile
- *     description: Returns all info associated with a specific profile
+ *     summary: Gets all the categories of a story
  *     tags:
  *       - Stories
  *     parameters:
@@ -52,11 +51,11 @@ export async function GET(
 ) {
     try {
         const { id } = await params
-        const storyId = parseInt(id, 10)
+        const storyIdParsed = parseInt(id, 10)
 
         const storyCategories = await prisma.storyCategories.findMany({
             where: {
-                story_id : storyId
+                story_id : storyIdParsed
             },
             select: {
                 id: true,
