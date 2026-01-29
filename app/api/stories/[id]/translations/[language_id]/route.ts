@@ -5,8 +5,7 @@ import {prisma} from "@/lib/prisma";
  * @swagger
  * /api/stories/{story_id}/translations/{language_id}:
  *   get:
- *     summary: Gets a profile
- *     description: Returns all info associated with a specific profile
+ *     summary: Gets a story translation
  *     tags:
  *       - Stories
  *     parameters:
@@ -15,7 +14,17 @@ import {prisma} from "@/lib/prisma";
  *         required: true
  *         schema:
  *           type: integer
- *         description: The story ID
+ *       - in: path
+ *         name: language_id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: query
+ *         name: pages
+ *         schema:
+ *           type: integer
+ *           default: 5
+ *         description: Number of pages to return
  *     responses:
  *       200:
  *         description: Successful response
@@ -28,35 +37,51 @@ import {prisma} from "@/lib/prisma";
  *                 properties:
  *                   id:
  *                     type: integer
- *                   profile_id:
- *                     type: integer
- *                   category_id:
- *                     type: integer
- *                   category:
+ *                   title:
+ *                     type: string
+ *                   language:
  *                     type: object
  *                     properties:
  *                       id:
  *                         type: integer
  *                       name:
  *                         type: string
+ *                       country_code:
+ *                         type: string
+ *                   storyPages:
+ *                     type: array
+ *                     items:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: integer
+ *                         page_number:
+ *                           type: integer
+ *                         text_content:
+ *                           type: string
  *       400:
- *         description: Invalid profile ID
+ *         description: Invalid story ID or language ID
  *       404:
- *         description: No categories found
+ *         description: Translation not found
  *       500:
  *         description: Server error
  */
 export async function GET(
     request: Request,
-    { params }: { params: Promise<{ id: string }> }
+    { params }: { params: Promise<{ id: string; language_id: string }> }
 ) {
     try {
-        const { id } = await params
-        const storyId = parseInt(id, 10)
+        const { id, language_id } = await params
+        const storyIdParsed = parseInt(id, 10)
+        const languageIdParsed = parseInt(language_id, 10)
+
+        const { searchParams } = new URL(request.url)
+        const pages = parseInt(searchParams.get('pages') || '5', 10)
 
         const storyTranslations = await prisma.storyTranslations.findMany({
             where: {
-                story_id : storyId
+                story_id : storyIdParsed,
+                language_id: languageIdParsed
             },
             select: {
                 id: true,
@@ -68,6 +93,17 @@ export async function GET(
                         country_code: true,
                     }
                 },
+                storyPages: {
+                    take: pages,
+                    orderBy: {
+                        id: 'asc'
+                    },
+                    select: {
+                        id: true,
+                        page_number: true,
+                        text_content: true
+                    }
+                }
             }
         })
 
