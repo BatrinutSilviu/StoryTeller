@@ -19,7 +19,7 @@ model Stories {
 
 model Profiles {
   id        Int      @id @default(autoincrement())
-  user_id Int
+  user_id    String   @unique @db.Uuid
   name String
   age Int
   gender Boolean

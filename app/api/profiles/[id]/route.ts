@@ -9,12 +9,14 @@ import { createClient } from '@/lib/supabase-server'
  *     summary: Gets all the profiles of an user
  *     tags:
  *       - Profiles
+ *     security:
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: user_id
  *         required: true
  *         schema:
- *           type: integer
+ *           type: string
  *         description: The user ID
  *     responses:
  *       200:
@@ -54,23 +56,21 @@ export async function GET(
         const supabase = await createClient()
         const { data: { user }, error: authError } = await supabase.auth.getUser()
 
-        // if (authError || !user) {
-        //     return NextResponse.json(
-        //         { error: 'Unauthorized' },
-        //         { status: 401 }
-        //     )
-        // }
+        if (authError || !user) {
+            return NextResponse.json(
+                { error: 'Unauthorized' },
+                { status: 401 }
+            )
+        }
 
         const { id } = await params
-        const userId = parseInt(id, 10)
 
         const profiles = await prisma.profiles.findMany({
             where: {
-                user_id : userId
+                user_id : id
             },
             select: {
                 id: true,
-                user_id: true,
                 name: true,
                 age: true,
                 gender: true
