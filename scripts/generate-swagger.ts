@@ -21,6 +21,16 @@ const spec = createSwaggerSpec({
                 description: 'Production server',
             },
         ],
+        components: {
+            securitySchemes: {
+                BearerAuth: {
+                    type: 'http',
+                    scheme: 'bearer',
+                    bearerFormat: 'JWT',
+                    description: 'Enter your JWT token from the login endpoint'
+                }
+            }
+        },
     },
 })
 

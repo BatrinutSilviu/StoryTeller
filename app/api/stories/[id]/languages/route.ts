@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import {prisma} from "@/lib/prisma";
+import {getAuthenticatedUser} from "@/lib/auth";
 
 /**
  * @swagger
@@ -8,6 +9,8 @@ import {prisma} from "@/lib/prisma";
  *     summary: Gets all the languages of a story
  *     tags:
  *       - Stories
+ *     security:
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: story_id
@@ -50,6 +53,12 @@ export async function GET(
     { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const { user, error } = await getAuthenticatedUser()
+
+        if (error) {
+            return error
+        }
+
         const { id } = await params
         const storyId = parseInt(id, 10)
 
