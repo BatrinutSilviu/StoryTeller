@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase-server'
 import { NextResponse } from 'next/server'
 
+//TODO make this a middleware
 export async function getAuthenticatedUser() {
     const supabase = await createClient()
     const { data: { user }, error: authError } = await supabase.auth.getUser()
