@@ -4,7 +4,7 @@ import {getAuthenticatedUser} from "@/lib/auth";
 
 /**
  * @swagger
- * /api/stories/{story_id}/categories:
+ * /api/stories/{story_id}/categories/language/{language_id}:
  *   get:
  *     summary: Gets all the categories of a story
  *     tags:
@@ -18,6 +18,12 @@ import {getAuthenticatedUser} from "@/lib/auth";
  *         schema:
  *           type: integer
  *         description: The story ID
+ *       - in: path
+ *         name: language_id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: The language ID
  *     responses:
  *       200:
  *         description: Successful response
@@ -50,7 +56,7 @@ import {getAuthenticatedUser} from "@/lib/auth";
  */
 export async function GET(
     request: Request,
-    { params }: { params: Promise<{ id: string }> }
+    { params }: { params: Promise<{ id: string, language_id: string }> }
 ) {
     try {
         const { user, error } = await getAuthenticatedUser()
@@ -59,8 +65,9 @@ export async function GET(
             return error
         }
 
-        const { id } = await params
+        const { id, language_id } = await params
         const storyIdParsed = parseInt(id, 10)
+        const languageIdParsed = parseInt(language_id, 10)
 
         const storyCategories = await prisma.storyCategories.findMany({
             where: {
@@ -71,7 +78,15 @@ export async function GET(
                 category: {
                     select: {
                         id: true,
-                        name: true
+                        photo_url: true,
+                        categoryTranslations: {
+                            where: {
+                                language_id: languageIdParsed
+                            },
+                            select: {
+                                name: true
+                            }
+                        }
                     }
                 },
             }
