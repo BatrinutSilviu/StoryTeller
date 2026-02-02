@@ -49,7 +49,7 @@ import { getAuthenticatedUser } from '@/lib/auth'
  */
 export async function GET(
     request: Request,
-    { params }: { params: Promise<{ id: string; language_id: string }> }
+    { params }: { params: Promise<{ language_id: string }> }
 ) {
     try {
         const { user, error } = await getAuthenticatedUser()
