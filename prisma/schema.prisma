@@ -9,6 +9,7 @@ datasource db {
 
 model Stories {
   id        Int      @id @default(autoincrement())
+  photo_url String?
   story_series_id Int?
   created_at DateTime @default(now())
   storyCategories StoryCategories[]
@@ -31,10 +32,11 @@ model Profiles {
 
 model Categories {
   id        Int      @id @default(autoincrement())
-  name String
+  photo_url String?
   created_at DateTime @default(now())
   profileCategories ProfileCategories[]
   storyCategories StoryCategories[]
+  categoryTranslations CategoryTranslations[]
 
   @@map("Categories")
 }
@@ -45,6 +47,7 @@ model Languages {
   country_code String
   created_at DateTime @default(now())
   storyTranslations StoryTranslations[]
+  categoryTranslations CategoryTranslations[]
 
   @@map("Languages")
 }
@@ -87,7 +90,7 @@ model StoryTranslations {
   story_id Int
   language_id Int
   title String
-  audio_link String
+  audio_url String?
   created_at DateTime @default(now())
   language Languages @relation(fields: [language_id], references: [id])
   story Stories @relation(fields: [story_id], references: [id])
@@ -95,4 +98,16 @@ model StoryTranslations {
   storyPages StoryPages[]
 
   @@map("Story_Translations")
+}
+
+model CategoryTranslations {
+  id        Int      @id @default(autoincrement())
+  category_id Int
+  language_id Int
+  name String
+  created_at DateTime @default(now())
+  language Languages @relation(fields: [language_id], references: [id])
+  category Categories @relation(fields: [category_id], references: [id])
+
+  @@map("Category_Translations")
 }

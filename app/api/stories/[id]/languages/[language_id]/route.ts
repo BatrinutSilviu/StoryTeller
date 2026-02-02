@@ -90,11 +90,17 @@ export async function GET(
         const storyTranslations = await prisma.storyTranslations.findMany({
             where: {
                 story_id : storyIdParsed,
+
                 language_id: languageIdParsed
             },
             select: {
                 id: true,
                 title: true,
+                story: {
+                    select: {
+                        photo_url: true
+                    }
+                },
                 language: {
                     select: {
                         id: true,
