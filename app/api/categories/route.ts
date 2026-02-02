@@ -19,10 +19,18 @@ import { getAuthenticatedUser } from '@/lib/auth'
  *             type: object
  *             required:
  *               - name
+ *               - language_id
+ *               - photo_url
  *             properties:
  *               name:
  *                 type: string
  *                 example: Sports
+ *               language_id:
+ *                 type: string
+ *                 example: 1
+ *               photo_url:
+ *                 type: string
+ *                 example: www.test.com/photo.jpg
  *     responses:
  *       201:
  *         description: Category created successfully
@@ -55,7 +63,9 @@ export async function POST(request: Request) {
         }
 
         const body = await request.json()
-        const { name } = body
+        const { name, language_id, photo_url } = body
+
+        const languageIdParsed = parseInt(language_id, 10)
 
         if (!name || name.trim().length === 0) {
             return NextResponse.json(
@@ -64,7 +74,7 @@ export async function POST(request: Request) {
             )
         }
 
-        const existingCategory = await prisma.categories.findFirst({
+        const existingCategory = await prisma.categoryTranslations.findFirst({
             where: {
                 name: {
                     equals: name,
@@ -82,11 +92,19 @@ export async function POST(request: Request) {
 
         const category = await prisma.categories.create({
             data: {
-                name: name.trim(),
+                photo_url: photo_url,
             }
         })
 
-        return NextResponse.json(category, { status: 201 })
+        const categoryTranslation = await prisma.categoryTranslations.create({
+            data: {
+                category_id: category.id,
+                name: name.trim(),
+                language_id: languageIdParsed
+            }
+        })
+
+        return NextResponse.json(categoryTranslation, { status: 201 })
     } catch (error) {
         console.error('Create category error:', error)
 
