@@ -14,6 +14,7 @@ model Stories {
   created_at DateTime @default(now())
   storyCategories StoryCategories[]
   storyTranslations StoryTranslations[]
+  playlistStories PlaylistStories[]
 
   @@map("Stories")
 }
@@ -26,6 +27,7 @@ model Profiles {
   gender Boolean
   created_at DateTime @default(now())
   profileCategories ProfileCategories[]
+  playlists Playlists[]
 
   @@map("Profiles")
 }
@@ -110,4 +112,28 @@ model CategoryTranslations {
   category Categories @relation(fields: [category_id], references: [id])
 
   @@map("Category_Translations")
+}
+
+model Playlists {
+  id        Int      @id @default(autoincrement())
+  profile_id Int
+  name String
+  created_at DateTime @default(now())
+  profile Profiles @relation(fields: [profile_id], references: [id])
+  playlistStories PlaylistStories[]
+
+  @@map("Playlists")
+}
+
+model PlaylistStories {
+  id        Int      @id @default(autoincrement())
+  playlist_id Int
+  story_id Int
+  order Int
+  created_at DateTime @default(now())
+  playlist Playlists @relation(fields: [playlist_id], references: [id])
+  story Stories @relation(fields: [story_id], references: [id])
+
+  @@unique([playlist_id, story_id])
+  @@map("Playlist_Stories")
 }
