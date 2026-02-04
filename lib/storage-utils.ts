@@ -15,7 +15,7 @@ export function generateFileName(originalName: string, prefix?: string): string 
 
 // Organize by type and date
 export function generateOrganizedFileName(
-    type: 'avatar' | 'story-cover' | 'story-page' | 'audio',
+    type: 'avatar' | 'story-cover' | 'story-page' | 'audio' | 'category',
     userId: string,
     originalName: string
 ): string {
