@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getAuthenticatedUser } from '@/lib/auth'
+import {generateOrganizedFileName, getMaxFileSize, isValidImageType} from "@/lib/storage-utils";
+import {BUCKET_NAME, PUBLIC_URL, r2Client} from "@/lib/r2";
+import {PutObjectCommand} from "@aws-sdk/client-s3";
 
 /**
  * @swagger
@@ -14,21 +17,31 @@ import { getAuthenticatedUser } from '@/lib/auth'
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             required:
  *               - name
+ *               - date_of_birth
+ *               - gender
+ *               - photo
  *             properties:
  *               name:
  *                 type: string
  *                 example: Child
- *               age:
- *                 type: int
- *                 example: 12
+ *               date_of_birth:
+ *                 type: string
+ *                 format: date
+ *                 description: Date of birth in YYYY-MM-DD format
+ *                 example: "2012-05-15"
  *               gender:
  *                 type: boolean
- *                 example: 1 for male, 0 for female
+ *                 description: true for male, false for female
+ *                 example: true
+ *               photo:
+ *                 type: string
+ *                 format: binary
+ *                 description: Category photo image file
  *     responses:
  *       201:
  *         description: Profile created successfully
@@ -41,6 +54,16 @@ import { getAuthenticatedUser } from '@/lib/auth'
  *                   type: integer
  *                 name:
  *                   type: string
+ *                 date_of_birth:
+ *                   type: string
+ *                   format: date
+ *                 gender:
+ *                   type: boolean
+ *                 photo:
+ *                   type: string
+ *                 age:
+ *                   type: integer
+ *                   description: Calculated age from date_of_birth
  *                 created_at:
  *                   type: string
  *                   format: date-time
@@ -60,8 +83,11 @@ export async function POST(request: Request) {
             return authError
         }
 
-        const body = await request.json()
-        const { name, age, gender } = body
+        const formData = await request.formData()
+        const name = formData.get('name') as string
+        const date_of_birth = formData.get('date_of_birth') as string
+        const gender = formData.get('gender') as string
+        const photo = formData.get('photo') as File
 
         if (!name || name.trim().length === 0) {
             return NextResponse.json(
@@ -70,7 +96,48 @@ export async function POST(request: Request) {
             )
         }
 
-        const parsedGender = Boolean(gender)
+        if (!isValidImageType(photo.type)) {
+            return NextResponse.json(
+                { error: `Invalid file type: ${photo.type}. Must be JPEG, PNG, WebP, or GIF` },
+                { status: 400 }
+            )
+        }
+
+        const maxSize = getMaxFileSize('image')
+        if (photo.size > maxSize) {
+            return NextResponse.json(
+                { error: `File too large. Max size: ${maxSize / 1024 / 1024}MB` },
+                { status: 400 }
+            )
+        }
+
+        let dateOfBirth: Date | null = null
+        if (date_of_birth) {
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(date_of_birth)) {
+                return NextResponse.json(
+                    { error: 'Invalid date format. Use YYYY-MM-DD' },
+                    { status: 400 }
+                )
+            }
+
+            dateOfBirth = new Date(date_of_birth)
+
+            if (isNaN(dateOfBirth.getTime())) {
+                return NextResponse.json(
+                    { error: 'Invalid date' },
+                    { status: 400 }
+                )
+            }
+
+            if (dateOfBirth > new Date()) {
+                return NextResponse.json(
+                    { error: 'Date of birth cannot be in the future' },
+                    { status: 400 }
+                )
+            }
+        }
+
+        const parsedGender = gender !== undefined ? Boolean(gender) : null
 
         const existingProfile = await prisma.profiles.findFirst({
             where: {
@@ -86,16 +153,42 @@ export async function POST(request: Request) {
 
         if (existingProfile) {
             return NextResponse.json(
-                { error: 'Profile already exists' },
+                { error: 'Profile with this name already exists' },
                 { status: 409 }
             )
         }
 
+        const key = generateOrganizedFileName(
+            'category',
+            user.id,
+            photo.name
+        )
+
+        const arrayBuffer = await photo.arrayBuffer()
+        const buffer = Buffer.from(arrayBuffer)
+
+        await r2Client.send(
+            new PutObjectCommand({
+                Bucket: BUCKET_NAME,
+                Key: key,
+                Body: buffer,
+                ContentType: photo.type,
+                Metadata: {
+                    userId: user.id,
+                    originalName: photo.name,
+                    uploadedAt: new Date().toISOString(),
+                },
+            })
+        )
+
+        const photo_url = `${PUBLIC_URL}/${key}`
+
         const profile = await prisma.profiles.create({
             data: {
                 name: name.trim(),
-                age: age,
+                date_of_birth: dateOfBirth,
                 gender: parsedGender,
+                photo_url: photo_url,
                 user_id: user.id
             }
         })

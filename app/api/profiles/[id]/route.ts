@@ -68,8 +68,9 @@ export async function GET(
             select: {
                 id: true,
                 name: true,
-                age: true,
-                gender: true
+                date_of_birth: true,
+                gender: true,
+                photo_url: true
             }
         })
 

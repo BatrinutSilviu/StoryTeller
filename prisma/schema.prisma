@@ -23,8 +23,9 @@ model Profiles {
   id        Int      @id @default(autoincrement())
   user_id    String   @unique @db.Uuid
   name String
-  age Int
+  date_of_birth DateTime? @db.Date
   gender Boolean
+  photo_url String?
   created_at DateTime @default(now())
   profileCategories ProfileCategories[]
   playlists Playlists[]
