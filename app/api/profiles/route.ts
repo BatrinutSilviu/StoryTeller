@@ -137,7 +137,7 @@ export async function POST(request: Request) {
             }
         }
 
-        const parsedGender = gender !== undefined ? Boolean(gender) : null
+        const parsedGender = Boolean(gender)
 
         const existingProfile = await prisma.profiles.findFirst({
             where: {
