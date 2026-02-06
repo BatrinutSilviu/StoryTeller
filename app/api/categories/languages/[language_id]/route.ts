@@ -90,7 +90,7 @@ export async function GET(
     } catch (error) {
         console.error('Route error:', error)
         return NextResponse.json(
-            { error: 'Failed to fetch categories' },
+            { error: 'Failed to fetch categories: ' + error },
             { status: 500 }
         )
     }

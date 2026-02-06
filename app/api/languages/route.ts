@@ -68,7 +68,7 @@ export async function GET(request: Request) {
     } catch (error) {
         console.error('Route error:', error)
         return NextResponse.json(
-            { error: 'Failed to fetch languages' },
+            { error: 'Failed to fetch languages: ' + error },
             { status: 500 }
         )
     }

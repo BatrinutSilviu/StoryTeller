@@ -85,7 +85,7 @@ export async function GET(
     } catch (error) {
         console.error('Route error:', error)
         return NextResponse.json(
-            { error: 'Failed to fetch profile' },
+            { error: 'Failed to fetch profile: ' + error },
             { status: 500 }
         )
     }
