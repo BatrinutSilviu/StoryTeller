@@ -15,6 +15,7 @@ model Stories {
   storyCategories StoryCategories[]
   storyTranslations StoryTranslations[]
   playlistStories PlaylistStories[]
+  favorites Favorites[]
 
   @@map("Stories")
 }
@@ -29,6 +30,7 @@ model Profiles {
   created_at DateTime @default(now())
   profileCategories ProfileCategories[]
   playlists Playlists[]
+  favorites Favorites[]
 
   @@map("Profiles")
 }
@@ -137,4 +139,15 @@ model PlaylistStories {
 
   @@unique([playlist_id, story_id])
   @@map("Playlist_Stories")
+}
+
+model Favorites {
+  id        Int      @id @default(autoincrement())
+  profile_id Int
+  story_id Int
+  created_at DateTime @default(now())
+  profile Profiles @relation(fields: [profile_id], references: [id])
+  story Stories @relation(fields: [story_id], references: [id])
+
+  @@map("Favorites")
 }
