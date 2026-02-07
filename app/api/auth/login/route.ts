@@ -105,7 +105,6 @@ export async function POST(request: Request) {
     try {
         const { email, password } = await request.json()
 
-        // Validate input
         if (!email || !password) {
             return NextResponse.json(
                 { error: 'Email and password are required' },
@@ -115,7 +114,6 @@ export async function POST(request: Request) {
 
         const supabase = await createClient()
 
-        // Attempt login
         const { data, error: signInError } = await supabase.auth.signInWithPassword({
             email,
             password,
