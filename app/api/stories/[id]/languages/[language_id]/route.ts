@@ -90,12 +90,12 @@ export async function GET(
         const storyTranslations = await prisma.storyTranslations.findMany({
             where: {
                 story_id : storyIdParsed,
-
                 language_id: languageIdParsed
             },
             select: {
                 id: true,
                 title: true,
+                description: true,
                 story: {
                     select: {
                         photo_url: true
@@ -116,7 +116,9 @@ export async function GET(
                     select: {
                         id: true,
                         page_number: true,
-                        text_content: true
+                        text_content: true,
+                        photo_url: true,
+                        audio_url: true
                     }
                 }
             }

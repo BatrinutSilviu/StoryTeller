@@ -4,26 +4,24 @@ import {getAuthenticatedUser} from "@/lib/auth";
 
 /**
  * @swagger
- * /api/stories/categories/{category_id}/languages/{language_id}:
+ * /api/stories/{story_id}/languages/{language_id}/minified:
  *   get:
- *     summary: Gets all the stories from a category by language
+ *     summary: Gets a summary story translation by language
  *     tags:
  *       - Stories
  *     security:
  *       - BearerAuth: []
  *     parameters:
  *       - in: path
- *         name: category_id
+ *         name: story_id
  *         required: true
  *         schema:
  *           type: integer
- *         description: The category ID
  *       - in: path
  *         name: language_id
  *         required: true
  *         schema:
  *           type: integer
- *         description: The language ID
  *     responses:
  *       200:
  *         description: Successful response
@@ -36,27 +34,38 @@ import {getAuthenticatedUser} from "@/lib/auth";
  *                 properties:
  *                   id:
  *                     type: integer
- *                   profile_id:
- *                     type: integer
- *                   category_id:
- *                     type: integer
- *                   category:
+ *                   title:
+ *                     type: string
+ *                   language:
  *                     type: object
  *                     properties:
  *                       id:
  *                         type: integer
  *                       name:
  *                         type: string
+ *                       country_code:
+ *                         type: string
+ *                   storyPages:
+ *                     type: array
+ *                     items:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: integer
+ *                         page_number:
+ *                           type: integer
+ *                         text_content:
+ *                           type: string
  *       400:
- *         description: Invalid category ID
+ *         description: Invalid story ID or language ID
  *       404:
- *         description: No stories found
+ *         description: Translation not found
  *       500:
  *         description: Server error
  */
 export async function GET(
     request: Request,
-    { params }: { params: Promise<{ category_id: string, language_id: string }> }
+    { params }: { params: Promise<{ id: string; language_id: string }> }
 ) {
     try {
         const { user, error } = await getAuthenticatedUser()
@@ -65,46 +74,36 @@ export async function GET(
             return error
         }
 
-        const { category_id, language_id } = await params
-        const categoryIdParsed = parseInt(category_id, 10)
+        const { id, language_id } = await params
+        const storyIdParsed = parseInt(id, 10)
         const languageIdParsed = parseInt(language_id, 10)
 
-        const storyCategories = await prisma.storyCategories.findMany({
+        const storyTranslations = await prisma.storyTranslations.findMany({
             where: {
-                category_id : categoryIdParsed,
+                story_id : storyIdParsed,
+                language_id: languageIdParsed
             },
             select: {
                 id: true,
+                title: true,
+                description: true,
                 story: {
                     select: {
-                        id: true,
                         photo_url: true,
-                        storyTranslations: {
-                            where: {
-                                language_id: languageIdParsed
-                            },
-                            select: {
-                                id: true,
-                                title: true,
-                                description: true,
-                            },
-                            orderBy: {
-                                title: 'asc'
-                            },
-                        }
+                        duration: true
                     }
-                },
+                }
             }
         })
 
-        if (!storyCategories) {
+        if (!storyTranslations) {
             return NextResponse.json(
                 { error: 'Profile not found' },
                 { status: 404 }
             )
         }
 
-        return NextResponse.json(storyCategories)
+        return NextResponse.json(storyTranslations)
     } catch (error) {
         console.error('Route error:', error)
         return NextResponse.json(

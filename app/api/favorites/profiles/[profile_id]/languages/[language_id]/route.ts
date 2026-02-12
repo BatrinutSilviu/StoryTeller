@@ -82,7 +82,7 @@ export async function GET(
                         storyTranslations: {
                             select: {
                                 title: true,
-                                audio_url: true
+                                description: true,
                             },
                             where: {
                                 language_id: languageIdParsed

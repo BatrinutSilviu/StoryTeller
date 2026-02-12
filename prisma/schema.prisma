@@ -10,6 +10,7 @@ datasource db {
 model Stories {
   id        Int      @id @default(autoincrement())
   photo_url String?
+  duration Int?
   story_series_id Int?
   created_at DateTime @default(now())
   storyCategories StoryCategories[]
@@ -84,6 +85,8 @@ model StoryPages {
   page_number Int
   story_translation_id Int
   text_content String
+  photo_url String?
+  audio_url String?
   created_at DateTime @default(now())
   storyTranslation StoryTranslations @relation(fields: [story_translation_id], references: [id])
 
@@ -95,7 +98,7 @@ model StoryTranslations {
   story_id Int
   language_id Int
   title String
-  audio_url String?
+  description String?
   created_at DateTime @default(now())
   language Languages @relation(fields: [language_id], references: [id])
   story Stories @relation(fields: [story_id], references: [id])

@@ -186,9 +186,9 @@ export async function POST(
                                 id: true,
                                 title: true,
                                 language_id: true,
+                                description: true,
                                 language: {
                                     select: {
-                                        id: true,
                                         name: true,
                                         country_code: true
                                     }
