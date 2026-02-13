@@ -10,7 +10,6 @@ import { PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3"
  * /api/profiles/{id}:
  *   put:
  *     summary: Update a profile
- *     description: Updates profile information and optionally replaces the photo
  *     tags:
  *       - Profiles
  *     security:

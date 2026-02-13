@@ -61,6 +61,24 @@ export async function GET(
         const { language_id } = await params
         const languageIdParsed = parseInt(language_id, 10)
 
+        if (isNaN(languageIdParsed) || languageIdParsed < 1) {
+            return NextResponse.json(
+                { error: 'Invalid language ID' },
+                { status: 400 }
+            )
+        }
+
+        const existingLanguage = await prisma.languages.findUnique({
+            where: { id: languageIdParsed }
+        })
+
+        if (!existingLanguage) {
+            return NextResponse.json(
+                { error: 'Language not found' },
+                { status: 404 }
+            )
+        }
+
         const categories = await prisma.categoryTranslations.findMany({
             where: {
                 language_id: languageIdParsed

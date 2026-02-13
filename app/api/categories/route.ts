@@ -75,10 +75,14 @@ export async function POST(request: Request) {
             )
         }
 
-        if (isNaN(languageIdParsed)) {
+        const existingLanguage = await prisma.languages.findUnique({
+            where: { id: languageIdParsed }
+        })
+
+        if (!existingLanguage) {
             return NextResponse.json(
-                { error: 'Valid language_id is required' },
-                { status: 400 }
+                { error: 'Language not found' },
+                { status: 404 }
             )
         }
 
