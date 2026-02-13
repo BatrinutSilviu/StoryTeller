@@ -75,14 +75,14 @@ import { getAuthenticatedUser } from '@/lib/auth'
  */
 export async function PUT(
     request: Request,
-    { params }: { params: Promise<{ id: string }> }
+    { params }: { params: Promise<{ profile_id: string }> }
 ) {
     try {
         const { user, error: authError } = await getAuthenticatedUser()
         if (authError) return authError
 
-        const { id } = await params
-        const profileId = parseInt(id, 10)
+        const { profile_id } = await params
+        const profileId = parseInt(profile_id, 10)
 
         if (isNaN(profileId)) {
             return NextResponse.json(
@@ -230,14 +230,14 @@ export async function PUT(
  */
 export async function DELETE(
     request: Request,
-    { params }: { params: Promise<{ id: string }> }
+    { params }: { params: Promise<{ profile_id: string }> }
 ) {
     try {
         const { user, error: authError } = await getAuthenticatedUser()
         if (authError) return authError
 
-        const { id } = await params
-        const profileId = parseInt(id, 10)
+        const { profile_id } = await params
+        const profileId = parseInt(profile_id, 10)
 
         if (isNaN(profileId)) {
             return NextResponse.json(
@@ -331,7 +331,6 @@ export async function DELETE(
  * /api/profiles/{id}:
  *   get:
  *     summary: Get a profile by ID
- *     description: Returns profile information including calculated age
  *     tags:
  *       - Profiles
  *     security:
@@ -376,14 +375,14 @@ export async function DELETE(
  */
 export async function GET(
     request: Request,
-    { params }: { params: Promise<{ id: string }> }
+    { params }: { params: Promise<{ profile_id: string }> }
 ) {
     try {
         const { user, error: authError } = await getAuthenticatedUser()
         if (authError) return authError
 
-        const { id } = await params
-        const profileId = parseInt(id, 10)
+        const { profile_id } = await params
+        const profileId = parseInt(profile_id, 10)
 
         if (isNaN(profileId)) {
             return NextResponse.json(

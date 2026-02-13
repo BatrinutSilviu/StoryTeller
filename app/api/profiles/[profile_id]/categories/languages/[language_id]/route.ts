@@ -89,7 +89,7 @@ export async function GET(
             }
         })
 
-        if (existingProfile) {
+        if (!existingProfile) {
             return NextResponse.json(
                 { error: 'Profile not found' },
                 { status: 404 }
@@ -102,7 +102,7 @@ export async function GET(
             }
         })
 
-        if (existingLanguage) {
+        if (!existingLanguage) {
             return NextResponse.json(
                 { error: 'Language not found' },
                 { status: 404 }
