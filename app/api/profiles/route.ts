@@ -1,9 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getAuthenticatedUser } from '@/lib/auth'
-import {generateOrganizedFileName, getMaxFileSize, isValidImageType} from "@/lib/storage-utils";
-import {BUCKET_NAME, PUBLIC_URL, r2Client} from "@/lib/r2";
-import {PutObjectCommand} from "@aws-sdk/client-s3";
 
 /**
  * @swagger
@@ -40,8 +37,8 @@ import {PutObjectCommand} from "@aws-sdk/client-s3";
  *                 example: true
  *               photo:
  *                 type: string
- *                 format: binary
- *                 description: Category photo image file
+ *                 description: Photo ID
+ *                 example: 16
  *     responses:
  *       201:
  *         description: Profile created successfully
@@ -87,7 +84,7 @@ export async function POST(request: Request) {
         const name = formData.get('name') as string
         const date_of_birth = formData.get('date_of_birth') as string
         const gender = formData.get('gender') as string
-        const photo = formData.get('photo') as File
+        const photo = formData.get('photo') as string
 
         if (!name || name.trim().length === 0) {
             return NextResponse.json(
@@ -96,22 +93,15 @@ export async function POST(request: Request) {
             )
         }
 
-        if (!isValidImageType(photo.type)) {
+        if (!photo) {
             return NextResponse.json(
-                { error: `Invalid file type: ${photo.type}. Must be JPEG, PNG, WebP, or GIF` },
-                { status: 400 }
-            )
-        }
-
-        const maxSize = getMaxFileSize('image')
-        if (photo.size > maxSize) {
-            return NextResponse.json(
-                { error: `File too large. Max size: ${maxSize / 1024 / 1024}MB` },
+                { error: 'Photo is required' },
                 { status: 400 }
             )
         }
 
         let dateOfBirth: Date | null = null
+
         if (date_of_birth) {
             if (!/^\d{4}-\d{2}-\d{2}$/.test(date_of_birth)) {
                 return NextResponse.json(
@@ -158,37 +148,12 @@ export async function POST(request: Request) {
             )
         }
 
-        const key = generateOrganizedFileName(
-            'category',
-            user.id,
-            photo.name
-        )
-
-        const arrayBuffer = await photo.arrayBuffer()
-        const buffer = Buffer.from(arrayBuffer)
-
-        await r2Client.send(
-            new PutObjectCommand({
-                Bucket: BUCKET_NAME,
-                Key: key,
-                Body: buffer,
-                ContentType: photo.type,
-                Metadata: {
-                    userId: user.id,
-                    originalName: photo.name,
-                    uploadedAt: new Date().toISOString(),
-                },
-            })
-        )
-
-        const photo_url = `${PUBLIC_URL}/${key}`
-
         const profile = await prisma.profiles.create({
             data: {
                 name: name.trim(),
                 date_of_birth: dateOfBirth,
                 gender: parsedGender,
-                photo_url: photo_url,
+                photo_url: photo,
                 user_id: user.id
             }
         })
