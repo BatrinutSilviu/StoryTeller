@@ -6,7 +6,6 @@ import { createClient } from '@/lib/supabase-server'
  * /api/auth/signup:
  *   post:
  *     summary: Create a new user account
- *     description: Registers a new user with Supabase Auth and creates their profile
  *     tags:
  *       - Authentication
  *     requestBody:
@@ -29,10 +28,6 @@ import { createClient } from '@/lib/supabase-server'
  *                 format: password
  *                 description: User's password (minimum 6 characters)
  *                 example: SecurePass123!
- *               name:
- *                 type: string
- *                 description: User's display name (optional)
- *                 example: John Doe
  *     responses:
  *       201:
  *         description: User account and profile created successfully
@@ -93,7 +88,7 @@ import { createClient } from '@/lib/supabase-server'
  */
 export async function POST(request: Request) {
     try {
-        const { email, password, username } = await request.json()
+        const { email, password } = await request.json()
 
         const supabase = await createClient()
 

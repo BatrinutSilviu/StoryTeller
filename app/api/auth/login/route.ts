@@ -6,7 +6,6 @@ import { createClient } from '@/lib/supabase-server'
  * /api/auth/login:
  *   post:
  *     summary: Login to user account
- *     description: Authenticates a user with email and password and returns session tokens
  *     tags:
  *       - Authentication
  *     requestBody:

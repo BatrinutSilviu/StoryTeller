@@ -6,7 +6,6 @@ import { createClient } from '@/lib/supabase-server'
  * /api/auth/refresh:
  *   post:
  *     summary: Refresh access token
- *     description: Uses refresh token to get a new access token
  *     tags:
  *       - Authentication
  *     requestBody:
