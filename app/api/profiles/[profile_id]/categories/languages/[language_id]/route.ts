@@ -56,7 +56,7 @@ import {getAuthenticatedUser} from "@/lib/auth";
  */
 export async function GET(
     request: Request,
-    { params }: { params: Promise<{ id: string, language_id: string }> }
+    { params }: { params: Promise<{ profile_id: string, language_id: string }> }
 ) {
     try {
         const { user, error } = await getAuthenticatedUser()
@@ -65,9 +65,49 @@ export async function GET(
             return error
         }
 
-        const { id, language_id } = await params
-        const profileIdParsed = parseInt(id, 10)
-        const lanaguageIdParsed = parseInt(language_id, 10)
+        const { profile_id, language_id } = await params
+        const profileIdParsed = parseInt(profile_id, 10)
+        const languageIdParsed = parseInt(language_id, 10)
+
+        if (isNaN(profileIdParsed) || profileIdParsed < 1) {
+            return NextResponse.json(
+                { error: 'Invalid profile ID' },
+                { status: 400 }
+            )
+        }
+
+        if (isNaN(languageIdParsed) || languageIdParsed < 1) {
+            return NextResponse.json(
+                { error: 'Invalid language ID' },
+                { status: 400 }
+            )
+        }
+
+        const existingProfile = await prisma.profiles.findFirst({
+            where: {
+                id: profileIdParsed
+            }
+        })
+
+        if (existingProfile) {
+            return NextResponse.json(
+                { error: 'Profile not found' },
+                { status: 404 }
+            )
+        }
+
+        const existingLanguage = await prisma.languages.findFirst({
+            where: {
+                id: languageIdParsed
+            }
+        })
+
+        if (existingLanguage) {
+            return NextResponse.json(
+                { error: 'Language not found' },
+                { status: 404 }
+            )
+        }
 
         const profileCategories = await prisma.profileCategories.findMany({
             where: {
@@ -81,7 +121,7 @@ export async function GET(
                         photo_url: true,
                         categoryTranslations: {
                             where: {
-                                language_id: lanaguageIdParsed
+                                language_id: languageIdParsed
                             },
                             select: {
                                 name: true
@@ -94,7 +134,7 @@ export async function GET(
 
         if (!profileCategories) {
             return NextResponse.json(
-                { error: 'Profile not found' },
+                { error: 'Profile categories not found' },
                 { status: 404 }
             )
         }
@@ -103,7 +143,7 @@ export async function GET(
     } catch (error) {
         console.error('Route error:', error)
         return NextResponse.json(
-            { error: 'Failed to fetch profile: ' + error },
+            { error: 'Failed to fetch categories: ' + error },
             { status: 500 }
         )
     }
