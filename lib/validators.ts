@@ -24,46 +24,52 @@ export async function validateExists<T>(
     return record as T
 }
 
-export async function validateLanguageExists(languageId: number) {
+export async function validateLanguageExists(languageId: any) {
+    const id = validateIntId(languageId)
+
     return validateExists(
         prisma.languages,
-        languageId,
+        id,
         'Language'
     )
 }
 
-export async function validateStoryExists(storyId: number) {
-    validateIntId(storyId)
+export async function validateStoryExists(storyId: any) {
+    const id = validateIntId(storyId)
 
     return validateExists(
         prisma.stories,
-        storyId,
+        id,
         'Story'
     )
 }
 
-export async function validateCategoryExists(categoryId: number) {
-    validateIntId(categoryId)
+export async function validateCategoryExists(categoryId: any) {
+    const id = validateIntId(categoryId)
 
     return validateExists(
         prisma.categories,
-        categoryId,
+        id,
         'Category'
     )
 }
 
-export async function validateProfileExists(profileId: number) {
+export async function validateProfileExists(profileId: any) {
+    const id = validateIntId(profileId)
+
     return validateExists(
         prisma.profiles,
-        profileId,
+        id,
         'Profile'
     )
 }
 
-export async function validatePlaylistExists(playlistId: number) {
+export async function validatePlaylistExists(playlistId: any) {
+    const id = validateIntId(playlistId)
+
     return validateExists(
         prisma.playlists,
-        playlistId,
+        id,
         'Playlist'
     )
 }
@@ -133,7 +139,8 @@ export function validateIntId(id: any, fieldName: string = 'ID'): number {
         throw new ValidationError(`${fieldName} is required`, 400)
     }
 
-    const parsed = parseInt(id, 10)
+    // Convert to string first, then parse (handles both string and number inputs)
+    const parsed = parseInt(String(id), 10)
 
     if (isNaN(parsed) || parsed < 1) {
         throw new ValidationError(`Invalid ${fieldName}`, 400)
