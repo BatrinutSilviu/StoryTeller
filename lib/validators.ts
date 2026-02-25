@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma'
+import {Languages, Stories, Playlists, Categories, Profiles} from '@prisma/client';
 
 export class ValidationError extends Error {
     constructor(
@@ -24,7 +25,7 @@ export async function validateExists<T>(
     return record as T
 }
 
-export async function validateLanguageExists(languageId: any) {
+export async function validateLanguageExists(languageId: any): Promise<Languages> {
     const id = validateIntId(languageId)
 
     return validateExists(
@@ -34,7 +35,7 @@ export async function validateLanguageExists(languageId: any) {
     )
 }
 
-export async function validateStoryExists(storyId: any) {
+export async function validateStoryExists(storyId: any): Promise<Stories> {
     const id = validateIntId(storyId)
 
     return validateExists(
@@ -44,7 +45,7 @@ export async function validateStoryExists(storyId: any) {
     )
 }
 
-export async function validateCategoryExists(categoryId: any) {
+export async function validateCategoryExists(categoryId: any): Promise<Categories> {
     const id = validateIntId(categoryId)
 
     return validateExists(
@@ -54,7 +55,7 @@ export async function validateCategoryExists(categoryId: any) {
     )
 }
 
-export async function validateProfileExists(profileId: any) {
+export async function validateProfileExists(profileId: any): Promise<Profiles> {
     const id = validateIntId(profileId)
 
     return validateExists(
@@ -64,7 +65,7 @@ export async function validateProfileExists(profileId: any) {
     )
 }
 
-export async function validatePlaylistExists(playlistId: any) {
+export async function validatePlaylistExists(playlistId: any): Promise<Playlists> {
     const id = validateIntId(playlistId)
 
     return validateExists(
