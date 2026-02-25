@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getAuthenticatedUser } from '@/lib/auth'
+import {
+    validateLanguageExists,
+    validatePlaylistExists
+} from '@/lib/validators'
 
 /**
  * @swagger
@@ -62,54 +66,13 @@ export async function GET(
 
         const { playlist_id, language_id } = await params
 
-        if (!playlist_id || !language_id) {
-            return NextResponse.json(
-                { error: 'playlist_id or language_id are required' },
-                { status: 400 }
-            )
-        }
-
-        const parsedPlaylistId = parseInt(playlist_id, 10)
-        const parsedLanguageId = parseInt(language_id, 10)
-
-        if (isNaN(parsedPlaylistId)) {
-            return NextResponse.json(
-                { error: 'Invalid playlist ID' },
-                { status: 400 }
-            )
-        }
-
-        if (isNaN(parsedLanguageId)) {
-            return NextResponse.json(
-                { error: 'Invalid language ID' },
-                { status: 400 }
-            )
-        }
-
-        const existingPlaylist = await prisma.playlists.findUnique({
-            where: { id: parsedPlaylistId }
-        })
-
-        if (!existingPlaylist) {
-            return NextResponse.json(
-                { error: 'Playlist not found' },
-                { status: 404 }
-            )
-        }
-
-        const existingLanguage = await prisma.languages.findUnique({
-            where: { id: parsedLanguageId }
-        })
-
-        if (!existingLanguage) {
-            return NextResponse.json(
-                { error: 'Language not found' },
-                { status: 404 }
-            )
-        }
+        const [inputLanguage, inputPlaylist] = await Promise.all([
+            validateLanguageExists(language_id),
+            validatePlaylistExists(playlist_id)
+        ])
 
         const playlist = await prisma.playlists.findUnique({
-            where: { id: parsedPlaylistId },
+            where: { id: inputPlaylist.id },
             include: {
                 profile: {
                     select: {
@@ -129,7 +92,7 @@ export async function GET(
                                         title: true,
                                     },
                                     where: {
-                                        language_id: parsedLanguageId
+                                        language_id: inputLanguage.id
                                     }
                                 }
                             }
