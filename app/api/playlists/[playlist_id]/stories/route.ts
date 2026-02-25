@@ -75,6 +75,14 @@ export async function POST(
         if (authError) return authError
 
         const { playlist_id } = await params
+
+        if (!playlist_id) {
+            return NextResponse.json(
+                { error: 'playlist_id is required' },
+                { status: 400 }
+            )
+        }
+
         const parsedPlaylistId = parseInt(playlist_id, 10)
 
         if (isNaN(parsedPlaylistId)) {
@@ -135,14 +143,14 @@ export async function POST(
             )
         }
 
-        const existingStory = await prisma.playlistStories.findFirst({
+        const existingPlaylistStory = await prisma.playlistStories.findFirst({
             where: {
                 playlist_id: parsedPlaylistId,
                 story_id: story_id
             }
         })
 
-        if (existingStory) {
+        if (!existingPlaylistStory) {
             return NextResponse.json(
                 { error: 'Story already exists in this playlist' },
                 { status: 409 }

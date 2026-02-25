@@ -60,9 +60,28 @@ export async function GET(
         }
 
         const { profile_id } = await params
+
+        if (!profile_id) {
+            return NextResponse.json(
+                { error: 'profile_id is required' },
+                { status: 400 }
+            )
+        }
+
         const profileIdParsed = parseInt(profile_id, 10)
 
-        const profileCategories = await prisma.playlists.findMany({
+        const existingProfile = await prisma.profiles.findUnique({
+            where: { id: profileIdParsed }
+        })
+
+        if (!existingProfile) {
+            return NextResponse.json(
+                { error: 'Profile not found' },
+                { status: 404 }
+            )
+        }
+
+        const playlist = await prisma.playlists.findMany({
             where: {
                 profile_id : profileIdParsed
             },
@@ -82,18 +101,18 @@ export async function GET(
             }
         })
 
-        if (!profileCategories) {
+        if (!playlist) {
             return NextResponse.json(
-                { error: 'Profile not found' },
+                { error: 'Playlist not found' },
                 { status: 404 }
             )
         }
 
-        return NextResponse.json(profileCategories)
+        return NextResponse.json(playlist)
     } catch (error) {
         console.error('Route error:', error)
         return NextResponse.json(
-            { error: 'Failed to fetch profile: ' + error },
+            { error: 'Failed to fetch playlist: ' + error },
             { status: 500 }
         )
     }

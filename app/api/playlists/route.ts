@@ -141,14 +141,14 @@ export async function POST(request: Request) {
         if (error instanceof Error) {
             if (error.message.includes('Unique constraint')) {
                 return NextResponse.json(
-                    { error: 'Profile already exists' },
+                    { error: 'Playlist already exists' },
                     { status: 409 }
                 )
             }
         }
 
         return NextResponse.json(
-            { error: 'Failed to create profile: ' + error },
+            { error: 'Failed to create playlit: ' + error },
             { status: 500 }
         )
     }

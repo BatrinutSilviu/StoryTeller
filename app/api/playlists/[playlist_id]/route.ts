@@ -68,12 +68,31 @@ export async function PUT(
         if (authError) return authError
 
         const { playlist_id } = await params
-        const playlistId = parseInt(playlist_id, 10)
 
-        if (isNaN(playlistId)) {
+        if (!playlist_id) {
+            return NextResponse.json(
+                { error: 'playlist_id is required' },
+                { status: 400 }
+            )
+        }
+
+        const playlistIdParsed = parseInt(playlist_id, 10)
+
+        if (isNaN(playlistIdParsed)) {
             return NextResponse.json(
                 { error: 'Invalid playlist ID' },
                 { status: 400 }
+            )
+        }
+
+        const existingPlaylist = await prisma.playlists.findUnique({
+            where: { id: playlistIdParsed }
+        })
+
+        if (!existingPlaylist) {
+            return NextResponse.json(
+                { error: 'Playlist not found' },
+                { status: 404 }
             )
         }
 
@@ -88,7 +107,7 @@ export async function PUT(
         }
 
         const playlist = await prisma.playlists.findUnique({
-            where: { id: playlistId },
+            where: { id: playlistIdParsed },
             include: {
                 profile: {
                     select: {
@@ -113,7 +132,7 @@ export async function PUT(
         }
 
         const updatedPlaylist = await prisma.playlists.update({
-            where: { id: playlistId },
+            where: { id: playlistIdParsed },
             data: {
                 name: name.trim()
             },
@@ -189,17 +208,36 @@ export async function DELETE(
         if (authError) return authError
 
         const { playlist_id } = await params
-        const playlistId = parseInt(playlist_id, 10)
 
-        if (isNaN(playlistId)) {
+        if (!playlist_id) {
+            return NextResponse.json(
+                { error: 'playlist_id is required' },
+                { status: 400 }
+            )
+        }
+
+        const playlistIdParsed = parseInt(playlist_id, 10)
+
+        if (isNaN(playlistIdParsed)) {
             return NextResponse.json(
                 { error: 'Invalid playlist ID' },
                 { status: 400 }
             )
         }
 
+        const existingPlaylist = await prisma.playlists.findUnique({
+            where: { id: playlistIdParsed }
+        })
+
+        if (!existingPlaylist) {
+            return NextResponse.json(
+                { error: 'Playlist not found' },
+                { status: 404 }
+            )
+        }
+
         const playlist = await prisma.playlists.findUnique({
-            where: { id: playlistId },
+            where: { id: playlistIdParsed },
             include: {
                 profile: {
                     select: {
@@ -224,12 +262,12 @@ export async function DELETE(
         }
 
         await prisma.playlists.delete({
-            where: { id: playlistId }
+            where: { id: playlistIdParsed }
         })
 
         return NextResponse.json({
             message: 'Playlist deleted successfully',
-            id: playlistId
+            id: playlistIdParsed
         })
     } catch (error) {
         console.error('Delete playlist error:', error)

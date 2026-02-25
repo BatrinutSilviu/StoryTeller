@@ -61,6 +61,14 @@ export async function GET(
         if (authError) return authError
 
         const { playlist_id, language_id } = await params
+
+        if (!playlist_id || !language_id) {
+            return NextResponse.json(
+                { error: 'playlist_id or language_id are required' },
+                { status: 400 }
+            )
+        }
+
         const parsedPlaylistId = parseInt(playlist_id, 10)
         const parsedLanguageId = parseInt(language_id, 10)
 
@@ -75,6 +83,28 @@ export async function GET(
             return NextResponse.json(
                 { error: 'Invalid language ID' },
                 { status: 400 }
+            )
+        }
+
+        const existingPlaylist = await prisma.playlists.findUnique({
+            where: { id: parsedPlaylistId }
+        })
+
+        if (!existingPlaylist) {
+            return NextResponse.json(
+                { error: 'Playlist not found' },
+                { status: 404 }
+            )
+        }
+
+        const existingLanguage = await prisma.languages.findUnique({
+            where: { id: parsedLanguageId }
+        })
+
+        if (!existingLanguage) {
+            return NextResponse.json(
+                { error: 'Language not found' },
+                { status: 404 }
             )
         }
 

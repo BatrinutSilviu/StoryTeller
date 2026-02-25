@@ -45,8 +45,38 @@ export async function DELETE(
         if (authError) return authError
 
         const { playlist_id, story_id } = await params
+
+        if (!playlist_id || !story_id) {
+            return NextResponse.json(
+                { error: 'playlist_id or story_id are required' },
+                { status: 400 }
+            )
+        }
+
         const parsedPlaylistId = parseInt(playlist_id, 10)
         const parsedStoryId = parseInt(story_id, 10)
+
+        const existingPlaylist = await prisma.playlists.findUnique({
+            where: { id: parsedPlaylistId }
+        })
+
+        if (!existingPlaylist) {
+            return NextResponse.json(
+                { error: 'Playlist not found' },
+                { status: 404 }
+            )
+        }
+
+        const existingStory = await prisma.stories.findUnique({
+            where: { id: parsedStoryId }
+        })
+
+        if (!existingStory) {
+            return NextResponse.json(
+                { error: 'Story not found' },
+                { status: 404 }
+            )
+        }
 
         const playlist = await prisma.playlists.findUnique({
             where: { id: parsedPlaylistId },
