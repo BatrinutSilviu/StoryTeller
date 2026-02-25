@@ -69,22 +69,33 @@ export async function DELETE(
             )
         }
 
-        const profile = await prisma.profiles.findUnique({
+        const existingProfile = await prisma.profiles.findUnique({
             where: { id: profileIdParsed },
             select: { user_id: true }
         })
 
-        if (!profile) {
+        if (!existingProfile) {
             return NextResponse.json(
                 { error: 'Profile not found' },
                 { status: 404 }
             )
         }
 
-        if (profile.user_id !== user.id) {
+        if (existingProfile.user_id !== user.id) {
             return NextResponse.json(
                 { error: 'Forbidden - you can only manage your own favorites' },
                 { status: 403 }
+            )
+        }
+
+        const existingStory = await prisma.stories.findUnique({
+            where: { id: storyIdParsed }
+        })
+
+        if (!existingStory) {
+            return NextResponse.json(
+                { error: 'Story not found' },
+                { status: 404 }
             )
         }
 

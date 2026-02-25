@@ -69,6 +69,35 @@ export async function GET(
         const profileIdParsed = parseInt(profile_id, 10)
         const languageIdParsed = parseInt(language_id, 10)
 
+        if (isNaN(profileIdParsed) || isNaN(languageIdParsed)) {
+            return NextResponse.json(
+                { error: 'Invalid profile ID or language ID' },
+                { status: 400 }
+            )
+        }
+
+        const existingProfile = await prisma.profiles.findUnique({
+            where: { id: profileIdParsed }
+        })
+
+        if (!existingProfile) {
+            return NextResponse.json(
+                { error: 'Profile not found' },
+                { status: 404 }
+            )
+        }
+
+        const existingLanguage = await prisma.languages.findUnique({
+            where: { id: languageIdParsed }
+        })
+
+        if (!existingLanguage) {
+            return NextResponse.json(
+                { error: 'Language not found' },
+                { status: 404 }
+            )
+        }
+
         const favorites = await prisma.favorites.findMany({
             where: {
                 profile_id : profileIdParsed

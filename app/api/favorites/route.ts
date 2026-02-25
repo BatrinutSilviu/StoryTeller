@@ -81,36 +81,57 @@ export async function POST(request: Request) {
         const profileIdParsed = parseInt(profile_id, 10)
         const storyIdParsed = parseInt(story_id, 10)
 
-        const favorite = await prisma.favorites.findFirst({
+        const existingProfile = await prisma.profiles.findUnique({
+            where: { id: profileIdParsed }
+        })
+
+        if (!existingProfile) {
+            return NextResponse.json(
+                { error: 'Profile not found' },
+                { status: 404 }
+            )
+        }
+
+        const existingStory = await prisma.stories.findUnique({
+            where: { id: storyIdParsed }
+        })
+
+        if (!existingStory) {
+            return NextResponse.json(
+                { error: 'Story not found' },
+                { status: 404 }
+            )
+        }
+
+        const existingFavorite = await prisma.favorites.findFirst({
             where: {
                 profile_id: profileIdParsed,
                 story_id: storyIdParsed,
             }
         })
 
-
-        if (favorite) {
+        if (existingFavorite) {
             return NextResponse.json(
-                { error: 'Profile with this name already exists' },
+                { error: 'This favorite already exists' },
                 { status: 409 }
             )
         }
 
-        const profile = await prisma.favorites.create({
+        const favorite = await prisma.favorites.create({
             data: {
                 story_id: storyIdParsed,
                 profile_id: profileIdParsed,
             }
         })
 
-        return NextResponse.json(profile, { status: 201 })
+        return NextResponse.json(favorite, { status: 201 })
     } catch (error) {
         console.error('Create favorite error:', error)
 
         if (error instanceof Error) {
             if (error.message.includes('Unique constraint')) {
                 return NextResponse.json(
-                    { error: 'Profile already exists' },
+                    { error: 'Favorite already exists' },
                     { status: 409 }
                 )
             }
