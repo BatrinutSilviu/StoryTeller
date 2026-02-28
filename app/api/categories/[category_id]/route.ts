@@ -8,7 +8,7 @@ import { PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3"
 
 /**
  * @swagger
- * /api/categories/{id}:
+ * /api/categories/{category_id}:
  *   get:
  *     summary: Get a category by ID
  *     description: Returns category details with translations in all languages
@@ -74,14 +74,14 @@ import { PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3"
  */
 export async function GET(
     request: Request,
-    { params }: { params: Promise<{ id: string }> }
+    { params }: { params: Promise<{ category_id: string }> }
 ) {
     try {
         const { error: authError } = await getAuthenticatedUser()
         if (authError) return authError
 
-        const { id } = await params
-        const categoryId = validateIntId(id, 'category ID')
+        const { category_id } = await params
+        const categoryId = validateIntId(category_id, 'category ID')
 
         const category = await validateCategoryExists(categoryId)
 
@@ -132,7 +132,7 @@ export async function GET(
 
 /**
  * @swagger
- * /api/categories/{id}:
+ * /api/categories/{category_id}:
  *   put:
  *     summary: Update a category
  *     description: Updates category photo and/or translations
@@ -184,14 +184,14 @@ export async function GET(
  */
 export async function PUT(
     request: Request,
-    { params }: { params: Promise<{ id: string }> }
+    { params }: { params: Promise<{ category_id: string }> }
 ) {
     try {
         const { user, error: authError } = await getAuthenticatedUser()
         if (authError) return authError
 
-        const { id } = await params
-        const categoryId = validateIntId(id, 'category ID')
+        const { category_id } = await params
+        const categoryId = validateIntId(category_id, 'category ID')
 
         const existingCategory = await validateCategoryExists(categoryId)
 
@@ -292,7 +292,7 @@ export async function PUT(
 
 /**
  * @swagger
- * /api/categories/{id}:
+ * /api/categories/{category_id}:
  *   delete:
  *     summary: Delete a category
  *     description: Deletes a category and its photo from storage. Cannot delete if category is in use.
@@ -320,14 +320,14 @@ export async function PUT(
  */
 export async function DELETE(
     request: Request,
-    { params }: { params: Promise<{ id: string }> }
+    { params }: { params: Promise<{ category_id: string }> }
 ) {
     try {
         const { error: authError } = await getAuthenticatedUser()
         if (authError) return authError
 
-        const { id } = await params
-        const categoryId = validateIntId(id, 'category ID')
+        const { category_id } = await params
+        const categoryId = validateIntId(category_id, 'category ID')
 
         const category = await prisma.categories.findUnique({
             where: { id: categoryId },
