@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { getAuthenticatedUser } from '@/lib/auth'
+import {getAuthenticatedAdmin} from '@/lib/auth'
 import { PutObjectCommand } from '@aws-sdk/client-s3'
 import { r2Client, BUCKET_NAME, PUBLIC_URL } from '@/lib/r2'
 import { generateOrganizedFileName, isValidImageType, getMaxFileSize } from '@/lib/storage-utils'
@@ -49,7 +49,7 @@ import { generateOrganizedFileName, isValidImageType, getMaxFileSize } from '@/l
  */
 export async function POST(request: Request) {
     try {
-        const { user, error: authError } = await getAuthenticatedUser()
+        const { user, error: authError } = await getAuthenticatedAdmin()
         if (authError) {
             return authError
         }

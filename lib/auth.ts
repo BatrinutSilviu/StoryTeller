@@ -18,3 +18,29 @@ export async function getAuthenticatedUser() {
 
     return { user, error: null }
 }
+
+export async function getAuthenticatedAdmin() {
+    const supabase = await createClient()
+    const { data: { user }, error } = await supabase.auth.getUser()
+
+    if (error || !user) {
+        return {
+            user: null,
+            error: NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        }
+    }
+
+    const isAdmin = user.app_metadata?.role === 'admin'
+
+    if (!isAdmin) {
+        return {
+            user: null,
+            error: NextResponse.json(
+                { error: 'Forbidden - Admin access required' },
+                { status: 403 }
+            )
+        }
+    }
+
+    return { user, error: null }
+}

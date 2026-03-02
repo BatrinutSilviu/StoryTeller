@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { getAuthenticatedUser } from '@/lib/auth'
+import {getAuthenticatedAdmin, getAuthenticatedUser} from '@/lib/auth'
 import { validateIntId, validateCategoryExists, ValidationError } from '@/lib/validators'
 import { generateOrganizedFileName, getMaxFileSize, isValidImageType } from "@/lib/storage-utils"
 import { BUCKET_NAME, PUBLIC_URL, r2Client } from "@/lib/r2"
@@ -18,7 +18,7 @@ import { PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3"
  *       - BearerAuth: []
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: category_id
  *         required: true
  *         schema:
  *           type: integer
@@ -142,7 +142,7 @@ export async function GET(
  *       - BearerAuth: []
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: category_id
  *         required: true
  *         schema:
  *           type: integer
@@ -187,7 +187,7 @@ export async function PUT(
     { params }: { params: Promise<{ category_id: string }> }
 ) {
     try {
-        const { user, error: authError } = await getAuthenticatedUser()
+        const { user, error: authError } = await getAuthenticatedAdmin()
         if (authError) return authError
 
         const { category_id } = await params
@@ -302,7 +302,7 @@ export async function PUT(
  *       - BearerAuth: []
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: category_id
  *         required: true
  *         schema:
  *           type: integer
@@ -323,7 +323,7 @@ export async function DELETE(
     { params }: { params: Promise<{ category_id: string }> }
 ) {
     try {
-        const { error: authError } = await getAuthenticatedUser()
+        const { error: authError } = await getAuthenticatedAdmin()
         if (authError) return authError
 
         const { category_id } = await params

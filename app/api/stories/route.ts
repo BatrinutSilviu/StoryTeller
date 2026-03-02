@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { getAuthenticatedUser } from '@/lib/auth'
+import {getAuthenticatedAdmin} from '@/lib/auth'
 
 /**
  * @swagger
@@ -60,7 +60,7 @@ import { getAuthenticatedUser } from '@/lib/auth'
  */
 export async function POST(request: Request) {
     try {
-        const { user, error: authError } = await getAuthenticatedUser()
+        const { error: authError } = await getAuthenticatedAdmin()
         if (authError) return authError
 
         const body = await request.json()

@@ -135,12 +135,10 @@ export async function validateStoriesExist(storyIds: number[]) {
 }
 
 export function validateIntId(id: any, fieldName: string = 'ID'): number {
-    // Check if empty/missing first
     if (id === undefined || id === null || id === '') {
         throw new ValidationError(`${fieldName} is required`, 400)
     }
 
-    // Convert to string first, then parse (handles both string and number inputs)
     const parsed = parseInt(String(id), 10)
 
     if (isNaN(parsed) || parsed < 1) {
