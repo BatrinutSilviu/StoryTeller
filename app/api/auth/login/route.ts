@@ -129,7 +129,7 @@ export async function POST(request: Request) {
             user: {
                 id: data.user.id,
                 email: data.user.email,
-                created_at: data.user.created_at,
+                role: data.user.app_metadata?.role || 'user'
             },
             session: {
                 access_token: data.session?.access_token,
