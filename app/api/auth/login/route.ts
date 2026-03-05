@@ -48,9 +48,8 @@ import { createClient } from '@/lib/supabase-server'
  *                       type: string
  *                       format: email
  *                       example: user@example.com
- *                     created_at:
+ *                     role:
  *                       type: string
- *                       format: date-time
  *                 session:
  *                   type: object
  *                   properties:
