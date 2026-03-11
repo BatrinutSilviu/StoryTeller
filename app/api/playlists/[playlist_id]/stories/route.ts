@@ -53,6 +53,33 @@ import { getAuthenticatedUser } from '@/lib/auth'
  *                   type: integer
  *                 story:
  *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                     photo_url:
+ *                       type: string
+ *                       nullable: true
+ *                     storyTranslations:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: integer
+ *                           title:
+ *                             type: string
+ *                           language_id:
+ *                             type: integer
+ *                           description:
+ *                             type: string
+ *                             nullable: true
+ *                           language:
+ *                             type: object
+ *                             properties:
+ *                               name:
+ *                                 type: string
+ *                               country_code:
+ *                                 type: string
  *       400:
  *         description: Bad request - validation error
  *       401:

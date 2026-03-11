@@ -37,8 +37,8 @@ import { getAuthenticatedUser } from '@/lib/auth'
  *                 example: true
  *               photo:
  *                 type: string
- *                 description: Photo ID
- *                 example: 16
+ *                 description: Photo URL
+ *                 example: https://cdn.example.com/avatar.jpg
  *     responses:
  *       201:
  *         description: Profile created successfully
@@ -49,18 +49,20 @@ import { getAuthenticatedUser } from '@/lib/auth'
  *               properties:
  *                 id:
  *                   type: integer
+ *                 user_id:
+ *                   type: string
+ *                   format: uuid
  *                 name:
  *                   type: string
  *                 date_of_birth:
  *                   type: string
  *                   format: date
+ *                   nullable: true
  *                 gender:
  *                   type: boolean
- *                 photo:
+ *                 photo_url:
  *                   type: string
- *                 age:
- *                   type: integer
- *                   description: Calculated age from date_of_birth
+ *                   nullable: true
  *                 created_at:
  *                   type: string
  *                   format: date-time
@@ -69,7 +71,7 @@ import { getAuthenticatedUser } from '@/lib/auth'
  *       401:
  *         description: Unauthorized
  *       409:
- *         description: Profile already exists
+ *         description: Profile with this name already exists for this user
  *       500:
  *         description: Server error
  */

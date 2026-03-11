@@ -12,7 +12,7 @@ import {getAuthenticatedAdmin} from '@/lib/auth'
  *     security:
  *       - BearerAuth: []
  *     requestBody:
- *       required: true`
+ *       required: true
  *       content:
  *         application/json:
  *           schema:
@@ -53,10 +53,91 @@ import {getAuthenticatedAdmin} from '@/lib/auth'
  *     responses:
  *       201:
  *         description: Story created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                 photo_url:
+ *                   type: string
+ *                   nullable: true
+ *                 story_series_id:
+ *                   type: integer
+ *                   nullable: true
+ *                 created_at:
+ *                   type: string
+ *                   format: date-time
+ *                 storyCategories:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                       category:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: integer
+ *                           categoryTranslations:
+ *                             type: array
+ *                             items:
+ *                               type: object
+ *                               properties:
+ *                                 id:
+ *                                   type: integer
+ *                                 name:
+ *                                   type: string
+ *                                 language_id:
+ *                                   type: integer
+ *                 storyTranslations:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                       title:
+ *                         type: string
+ *                       description:
+ *                         type: string
+ *                         nullable: true
+ *                       language:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: integer
+ *                           name:
+ *                             type: string
+ *                           country_code:
+ *                             type: string
+ *                       storyPages:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             id:
+ *                               type: integer
+ *                             page_number:
+ *                               type: integer
+ *                             text_content:
+ *                               type: string
+ *                             photo_url:
+ *                               type: string
+ *                               nullable: true
+ *                             audio_url:
+ *                               type: string
+ *                               nullable: true
  *       400:
- *         description: Bad request
+ *         description: Bad request - missing required fields or invalid references
  *       401:
  *         description: Unauthorized
+ *       403:
+ *         description: Forbidden - admin access required
+ *       404:
+ *         description: Language or category not found
  */
 export async function POST(request: Request) {
     try {

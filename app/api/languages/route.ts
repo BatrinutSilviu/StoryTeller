@@ -13,7 +13,7 @@ import {getAuthenticatedUser} from "@/lib/auth";
  *       - BearerAuth: []
  *     responses:
  *       200:
- *         description: Successful response
+ *         description: List of all languages
  *         content:
  *           application/json:
  *             schema:
@@ -23,21 +23,16 @@ import {getAuthenticatedUser} from "@/lib/auth";
  *                 properties:
  *                   id:
  *                     type: integer
- *                   profile_id:
- *                     type: integer
- *                   category_id:
- *                     type: integer
- *                   category:
- *                     type: object
- *                     properties:
- *                       id:
- *                         type: integer
- *                       name:
- *                         type: string
- *       400:
- *         description: Invalid profile ID
+ *                   name:
+ *                     type: string
+ *                     example: English
+ *                   country_code:
+ *                     type: string
+ *                     example: en
+ *       401:
+ *         description: Unauthorized
  *       404:
- *         description: No categories found
+ *         description: Languages not found
  *       500:
  *         description: Server error
  */

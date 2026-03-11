@@ -4,7 +4,7 @@ import { getAuthenticatedUser } from '@/lib/auth'
 
 /**
  * @swagger
- * /api/profiles/{id}:
+ * /api/profiles/{profile_id}:
  *   put:
  *     summary: Update a profile
  *     tags:
@@ -13,7 +13,7 @@ import { getAuthenticatedUser } from '@/lib/auth'
  *       - BearerAuth: []
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: profile_id
  *         required: true
  *         schema:
  *           type: integer
@@ -37,7 +37,8 @@ import { getAuthenticatedUser } from '@/lib/auth'
  *                 example: true
  *               photo:
  *                 type: string
- *                 example: 17
+ *                 description: Photo URL
+ *                 example: https://cdn.example.com/avatar.jpg
  *     responses:
  *       200:
  *         description: Profile updated successfully
@@ -189,17 +190,17 @@ export async function PUT(
 
 /**
  * @swagger
- * /api/profiles/{id}:
+ * /api/profiles/{profile_id}:
  *   delete:
  *     summary: Delete a profile
- *     description: Deletes a profile and its associated photo from storage
+ *     description: Deletes a profile and all its associated playlists, favorites, and category preferences
  *     tags:
  *       - Profiles
  *     security:
  *       - BearerAuth: []
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: profile_id
  *         required: true
  *         schema:
  *           type: integer
@@ -217,6 +218,19 @@ export async function PUT(
  *                   example: Profile deleted successfully
  *                 id:
  *                   type: integer
+ *                 deleted:
+ *                   type: object
+ *                   properties:
+ *                     playlistStories:
+ *                       type: integer
+ *                     playlists:
+ *                       type: integer
+ *                     favorites:
+ *                       type: integer
+ *                     profileCategories:
+ *                       type: integer
+ *                     photo:
+ *                       type: boolean
  *       400:
  *         description: Invalid profile ID
  *       401:
@@ -328,7 +342,7 @@ export async function DELETE(
 
 /**
  * @swagger
- * /api/profiles/{id}:
+ * /api/profiles/{profile_id}:
  *   get:
  *     summary: Get a profile by ID
  *     tags:
@@ -337,14 +351,14 @@ export async function DELETE(
  *       - BearerAuth: []
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: profile_id
  *         required: true
  *         schema:
  *           type: integer
  *         description: Profile ID
  *     responses:
  *       200:
- *         description: Profile details
+ *         description: Profile details with category preferences
  *         content:
  *           application/json:
  *             schema:
@@ -352,24 +366,55 @@ export async function DELETE(
  *               properties:
  *                 id:
  *                   type: integer
+ *                 user_id:
+ *                   type: string
+ *                   format: uuid
  *                 name:
  *                   type: string
  *                 date_of_birth:
  *                   type: string
  *                   format: date
- *                 age:
- *                   type: integer
+ *                   nullable: true
  *                 gender:
  *                   type: boolean
  *                 photo_url:
  *                   type: string
+ *                   nullable: true
  *                 created_at:
  *                   type: string
  *                   format: date-time
+ *                 profileCategories:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                       category:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: integer
+ *                           photo_url:
+ *                             type: string
+ *                             nullable: true
+ *                           categoryTranslations:
+ *                             type: array
+ *                             items:
+ *                               type: object
+ *                               properties:
+ *                                 id:
+ *                                   type: integer
+ *                                 name:
+ *                                   type: string
+ *                                 language_id:
+ *                                   type: integer
+ *       400:
+ *         description: Invalid profile ID
  *       401:
  *         description: Unauthorized
  *       403:
- *         description: Forbidden
+ *         description: Forbidden - not your profile
  *       404:
  *         description: Profile not found
  */

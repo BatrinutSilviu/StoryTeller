@@ -29,7 +29,7 @@ import { getAuthenticatedUser } from '@/lib/auth'
  *                 example: 1
  *     responses:
  *       201:
- *         description: Profile created successfully
+ *         description: Favorite created successfully
  *         content:
  *           application/json:
  *             schema:
@@ -37,27 +37,21 @@ import { getAuthenticatedUser } from '@/lib/auth'
  *               properties:
  *                 id:
  *                   type: integer
- *                 name:
- *                   type: string
- *                 date_of_birth:
- *                   type: string
- *                   format: date
- *                 gender:
- *                   type: boolean
- *                 photo:
- *                   type: string
- *                 age:
+ *                 profile_id:
  *                   type: integer
- *                   description: Calculated age from date_of_birth
+ *                 story_id:
+ *                   type: integer
  *                 created_at:
  *                   type: string
  *                   format: date-time
  *       400:
- *         description: Bad request - validation error
+ *         description: Bad request - missing profile_id or story_id
  *       401:
  *         description: Unauthorized
+ *       404:
+ *         description: Profile or story not found
  *       409:
- *         description: Profile already exists
+ *         description: Favorite already exists
  *       500:
  *         description: Server error
  */

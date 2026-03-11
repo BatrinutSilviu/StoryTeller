@@ -48,6 +48,18 @@ import { getAuthenticatedUser } from '@/lib/auth'
  *                 created_at:
  *                   type: string
  *                   format: date-time
+ *                 profile:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                     name:
+ *                       type: string
+ *                 _count:
+ *                   type: object
+ *                   properties:
+ *                     playlistStories:
+ *                       type: integer
  *       400:
  *         description: Bad request - validation error
  *       401:

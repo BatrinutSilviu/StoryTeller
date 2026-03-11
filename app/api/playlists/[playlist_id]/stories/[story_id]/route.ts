@@ -27,12 +27,22 @@ import { getAuthenticatedUser } from '@/lib/auth'
  *     responses:
  *       200:
  *         description: Story removed from playlist successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Story removed from playlist successfully
+ *       400:
+ *         description: Invalid playlist ID or story ID
  *       401:
  *         description: Unauthorized
  *       403:
- *         description: Forbidden
+ *         description: Forbidden - not your playlist
  *       404:
- *         description: Playlist or story not found
+ *         description: Playlist, story, or playlist entry not found
  *       500:
  *         description: Server error
  */

@@ -6,7 +6,7 @@ import {getAuthenticatedUser} from "@/lib/auth";
  * @swagger
  * /api/stories/{story_id}/languages:
  *   get:
- *     summary: Gets all the languages of a story
+ *     summary: Gets all translations of a story
  *     tags:
  *       - Stories
  *     security:
@@ -20,7 +20,7 @@ import {getAuthenticatedUser} from "@/lib/auth";
  *         description: The story ID
  *     responses:
  *       200:
- *         description: Successful response
+ *         description: List of story translations with language info
  *         content:
  *           application/json:
  *             schema:
@@ -30,21 +30,23 @@ import {getAuthenticatedUser} from "@/lib/auth";
  *                 properties:
  *                   id:
  *                     type: integer
- *                   profile_id:
- *                     type: integer
- *                   category_id:
- *                     type: integer
- *                   category:
+ *                     description: StoryTranslation ID
+ *                   title:
+ *                     type: string
+ *                   description:
+ *                     type: string
+ *                     nullable: true
+ *                   language:
  *                     type: object
  *                     properties:
  *                       id:
  *                         type: integer
  *                       name:
  *                         type: string
- *       400:
- *         description: Invalid profile ID
- *       404:
- *         description: No categories found
+ *                       country_code:
+ *                         type: string
+ *       401:
+ *         description: Unauthorized
  *       500:
  *         description: Server error
  */

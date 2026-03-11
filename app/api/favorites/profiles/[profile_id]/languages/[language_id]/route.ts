@@ -26,7 +26,7 @@ import {getAuthenticatedUser} from "@/lib/auth";
  *         description: The language ID
  *     responses:
  *       200:
- *         description: Successful response
+ *         description: List of favorite stories for the profile with translation for the given language
  *         content:
  *           application/json:
  *             schema:
@@ -36,21 +36,32 @@ import {getAuthenticatedUser} from "@/lib/auth";
  *                 properties:
  *                   id:
  *                     type: integer
- *                   profile_id:
- *                     type: integer
- *                   category_id:
- *                     type: integer
- *                   category:
+ *                     description: Favorite ID
+ *                   story:
  *                     type: object
  *                     properties:
  *                       id:
  *                         type: integer
- *                       name:
+ *                       photo_url:
  *                         type: string
+ *                         nullable: true
+ *                       storyTranslations:
+ *                         type: array
+ *                         description: Contains one translation for the requested language
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             title:
+ *                               type: string
+ *                             description:
+ *                               type: string
+ *                               nullable: true
  *       400:
- *         description: Invalid profile ID
+ *         description: Invalid profile ID or language ID
+ *       401:
+ *         description: Unauthorized
  *       404:
- *         description: No categories found
+ *         description: Profile or language not found
  *       500:
  *         description: Server error
  */

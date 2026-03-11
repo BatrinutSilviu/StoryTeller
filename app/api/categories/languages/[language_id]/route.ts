@@ -19,7 +19,7 @@ import { getAuthenticatedUser } from '@/lib/auth'
  *           type: integer
  *     responses:
  *       200:
- *         description: Successful response
+ *         description: List of category translations for the given language, sorted by name
  *         content:
  *           application/json:
  *             schema:
@@ -29,21 +29,22 @@ import { getAuthenticatedUser } from '@/lib/auth'
  *                 properties:
  *                   id:
  *                     type: integer
- *                   profile_id:
- *                     type: integer
- *                   category_id:
- *                     type: integer
+ *                     description: CategoryTranslation ID
+ *                   name:
+ *                     type: string
+ *                     example: Adventure
  *                   category:
  *                     type: object
  *                     properties:
- *                       id:
- *                         type: integer
- *                       name:
+ *                       photo_url:
  *                         type: string
+ *                         nullable: true
  *       400:
- *         description: Invalid profile ID
+ *         description: Invalid language ID
+ *       401:
+ *         description: Unauthorized
  *       404:
- *         description: No categories found
+ *         description: Language not found
  *       500:
  *         description: Server error
  */

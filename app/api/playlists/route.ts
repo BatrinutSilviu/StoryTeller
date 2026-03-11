@@ -23,17 +23,19 @@ import { getAuthenticatedUser } from '@/lib/auth'
  *               - story_ids
  *             properties:
  *               profile_id:
- *                 type: string
+ *                 type: integer
  *                 example: 1
  *               story_ids:
  *                 type: array
- *                 example: [1,3,4]
+ *                 items:
+ *                   type: integer
+ *                 example: [1, 3, 4]
  *               name:
  *                 type: string
  *                 example: Gym
  *     responses:
  *       201:
- *         description: Profile created successfully
+ *         description: Playlist created successfully
  *         content:
  *           application/json:
  *             schema:
@@ -41,17 +43,19 @@ import { getAuthenticatedUser } from '@/lib/auth'
  *               properties:
  *                 id:
  *                   type: integer
+ *                 profile_id:
+ *                   type: integer
  *                 name:
  *                   type: string
  *                 created_at:
  *                   type: string
  *                   format: date-time
  *       400:
- *         description: Bad request - validation error
+ *         description: Bad request - missing fields, empty story_ids, or stories not found
  *       401:
  *         description: Unauthorized
- *       409:
- *         description: Profile already exists
+ *       404:
+ *         description: Profile or story not found
  *       500:
  *         description: Server error
  */

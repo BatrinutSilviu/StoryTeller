@@ -134,8 +134,8 @@ export async function GET(
  * @swagger
  * /api/categories/{category_id}:
  *   put:
- *     summary: Update a category
- *     description: Updates category photo and/or translations
+ *     summary: Update a category photo (admin only)
+ *     description: Replaces the category photo in R2 storage
  *     tags:
  *       - Categories
  *     security:
@@ -157,7 +157,7 @@ export async function GET(
  *               photo:
  *                 type: string
  *                 format: binary
- *                 description: Category photo (optional)
+ *                 description: New category photo (JPEG, PNG, WebP, or GIF, max 5MB)
  *     responses:
  *       200:
  *         description: Category updated successfully
@@ -170,13 +170,41 @@ export async function GET(
  *                   type: integer
  *                 photo_url:
  *                   type: string
+ *                   nullable: true
  *                 created_at:
  *                   type: string
  *                   format: date-time
+ *                 categoryTranslations:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                       category_id:
+ *                         type: integer
+ *                       language_id:
+ *                         type: integer
+ *                       name:
+ *                         type: string
+ *                       created_at:
+ *                         type: string
+ *                         format: date-time
+ *                       language:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: integer
+ *                           name:
+ *                             type: string
+ *                           country_code:
+ *                             type: string
  *       400:
- *         description: Bad request - validation error
+ *         description: Bad request - invalid file type or size
  *       401:
  *         description: Unauthorized
+ *       403:
+ *         description: Forbidden - admin access required
  *       404:
  *         description: Category not found
  *       500:
@@ -309,10 +337,37 @@ export async function PUT(
  *     responses:
  *       200:
  *         description: Category deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Category deleted successfully
+ *                 id:
+ *                   type: integer
  *       400:
  *         description: Cannot delete - category is in use
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Cannot delete category - it is being used
+ *                 details:
+ *                   type: object
+ *                   properties:
+ *                     stories:
+ *                       type: integer
+ *                     profiles:
+ *                       type: integer
  *       401:
  *         description: Unauthorized
+ *       403:
+ *         description: Forbidden - admin access required
  *       404:
  *         description: Category not found
  *       500:

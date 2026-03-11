@@ -26,7 +26,7 @@ import {getAuthenticatedUser} from "@/lib/auth";
  *         description: The language ID
  *     responses:
  *       200:
- *         description: Successful response
+ *         description: List of stories in the category with translation for the given language
  *         content:
  *           application/json:
  *             schema:
@@ -36,21 +36,30 @@ import {getAuthenticatedUser} from "@/lib/auth";
  *                 properties:
  *                   id:
  *                     type: integer
- *                   profile_id:
- *                     type: integer
- *                   category_id:
- *                     type: integer
- *                   category:
+ *                     description: StoryCategory ID
+ *                   story:
  *                     type: object
  *                     properties:
  *                       id:
  *                         type: integer
- *                       name:
+ *                       photo_url:
  *                         type: string
- *       400:
- *         description: Invalid category ID
- *       404:
- *         description: No stories found
+ *                         nullable: true
+ *                       storyTranslations:
+ *                         type: array
+ *                         description: Contains one translation for the requested language, sorted by title
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             id:
+ *                               type: integer
+ *                             title:
+ *                               type: string
+ *                             description:
+ *                               type: string
+ *                               nullable: true
+ *       401:
+ *         description: Unauthorized
  *       500:
  *         description: Server error
  */

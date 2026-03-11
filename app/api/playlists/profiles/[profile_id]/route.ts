@@ -20,7 +20,7 @@ import {getAuthenticatedUser} from "@/lib/auth";
  *         description: The profile ID
  *     responses:
  *       200:
- *         description: Successful response
+ *         description: List of playlists for the profile with story entries sorted by order
  *         content:
  *           application/json:
  *             schema:
@@ -30,21 +30,25 @@ import {getAuthenticatedUser} from "@/lib/auth";
  *                 properties:
  *                   id:
  *                     type: integer
- *                   profile_id:
- *                     type: integer
- *                   category_id:
- *                     type: integer
- *                   category:
- *                     type: object
- *                     properties:
- *                       id:
- *                         type: integer
- *                       name:
- *                         type: string
+ *                   name:
+ *                     type: string
+ *                   playlistStories:
+ *                     type: array
+ *                     items:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: integer
+ *                         order:
+ *                           type: integer
+ *                         story_id:
+ *                           type: integer
  *       400:
  *         description: Invalid profile ID
+ *       401:
+ *         description: Unauthorized
  *       404:
- *         description: No categories found
+ *         description: Profile not found
  *       500:
  *         description: Server error
  */

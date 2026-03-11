@@ -36,6 +36,12 @@ import { createClient } from '@/lib/supabase-server'
  *                 expires_in:
  *                   type: integer
  *                   example: 3600
+ *                 expires_at:
+ *                   type: integer
+ *                   description: Unix timestamp of expiry
+ *                 token_type:
+ *                   type: string
+ *                   example: bearer
  *       400:
  *         description: Missing refresh token
  *       401:

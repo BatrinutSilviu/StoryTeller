@@ -30,7 +30,7 @@ import {
  *         description: Language ID
  *     responses:
  *       200:
- *         description: Playlist details
+ *         description: Playlist with stories and their translations for the given language
  *         content:
  *           application/json:
  *             schema:
@@ -47,14 +47,45 @@ import {
  *                   format: date-time
  *                 playlistStories:
  *                   type: array
+ *                   description: Sorted by order ascending
  *                   items:
  *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                       playlist_id:
+ *                         type: integer
+ *                       story_id:
+ *                         type: integer
+ *                       order:
+ *                         type: integer
+ *                       created_at:
+ *                         type: string
+ *                         format: date-time
+ *                       story:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: integer
+ *                           photo_url:
+ *                             type: string
+ *                             nullable: true
+ *                           storyTranslations:
+ *                             type: array
+ *                             description: Contains one translation for the requested language
+ *                             items:
+ *                               type: object
+ *                               properties:
+ *                                 id:
+ *                                   type: integer
+ *                                 title:
+ *                                   type: string
  *       401:
  *         description: Unauthorized
  *       403:
- *         description: Forbidden
+ *         description: Forbidden - not your playlist
  *       404:
- *         description: Playlist not found
+ *         description: Playlist or language not found
  */
 export async function GET(
     request: Request,

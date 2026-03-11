@@ -30,7 +30,7 @@ import { createClient } from '@/lib/supabase-server'
  *                 example: SecurePass123!
  *     responses:
  *       201:
- *         description: User account and profile created successfully
+ *         description: User account created successfully
  *         content:
  *           application/json:
  *             schema:
@@ -42,29 +42,20 @@ import { createClient } from '@/lib/supabase-server'
  *                     id:
  *                       type: string
  *                       format: uuid
- *                       description: User's unique ID
  *                     email:
  *                       type: string
  *                       format: email
  *                     created_at:
  *                       type: string
  *                       format: date-time
- *                 profile:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: integer
- *                       description: Profile's database ID
- *                     user_id:
- *                       type: string
- *                       format: uuid
- *                       description: Reference to auth user
- *                     name:
- *                       type: string
- *                       description: User's display name
- *                     created_at:
+ *                     email_confirmed_at:
  *                       type: string
  *                       format: date-time
+ *                       nullable: true
+ *                     app_metadata:
+ *                       type: object
+ *                     user_metadata:
+ *                       type: object
  *       400:
  *         description: Bad request - invalid input or user already exists
  *         content:

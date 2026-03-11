@@ -38,15 +38,12 @@ import { supabaseAdmin } from '@/lib/supabase-admin'
  *                   date_of_birth:
  *                     type: string
  *                     format: date
- *                   age:
- *                     type: integer
+ *                     nullable: true
  *                   gender:
  *                     type: boolean
  *                   photo_url:
  *                     type: string
- *                   created_at:
- *                     type: string
- *                     format: date-time
+ *                     nullable: true
  *       400:
  *         description: Invalid user ID
  *       401:

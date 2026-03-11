@@ -26,7 +26,7 @@ import {getAuthenticatedUser} from "@/lib/auth";
  *         description: The language ID
  *     responses:
  *       200:
- *         description: Successful response
+ *         description: List of profile category preferences with translated names
  *         content:
  *           application/json:
  *             schema:
@@ -36,21 +36,29 @@ import {getAuthenticatedUser} from "@/lib/auth";
  *                 properties:
  *                   id:
  *                     type: integer
- *                   profile_id:
- *                     type: integer
- *                   category_id:
- *                     type: integer
+ *                     description: ProfileCategory ID
  *                   category:
  *                     type: object
  *                     properties:
  *                       id:
  *                         type: integer
- *                       name:
+ *                       photo_url:
  *                         type: string
+ *                         nullable: true
+ *                       categoryTranslations:
+ *                         type: array
+ *                         description: Contains one translation for the requested language
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             name:
+ *                               type: string
  *       400:
- *         description: Invalid profile ID
+ *         description: Invalid profile ID or language ID
+ *       401:
+ *         description: Unauthorized
  *       404:
- *         description: No categories found
+ *         description: Profile or language not found
  *       500:
  *         description: Server error
  */

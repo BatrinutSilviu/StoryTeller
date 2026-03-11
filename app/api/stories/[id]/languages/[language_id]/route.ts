@@ -30,7 +30,7 @@ import {getAuthenticatedUser} from "@/lib/auth";
  *         description: Number of pages to return
  *     responses:
  *       200:
- *         description: Successful response
+ *         description: Story translation with paginated pages
  *         content:
  *           application/json:
  *             schema:
@@ -40,8 +40,18 @@ import {getAuthenticatedUser} from "@/lib/auth";
  *                 properties:
  *                   id:
  *                     type: integer
+ *                     description: StoryTranslation ID
  *                   title:
  *                     type: string
+ *                   description:
+ *                     type: string
+ *                     nullable: true
+ *                   story:
+ *                     type: object
+ *                     properties:
+ *                       photo_url:
+ *                         type: string
+ *                         nullable: true
  *                   language:
  *                     type: object
  *                     properties:
@@ -62,10 +72,14 @@ import {getAuthenticatedUser} from "@/lib/auth";
  *                           type: integer
  *                         text_content:
  *                           type: string
- *       400:
- *         description: Invalid story ID or language ID
- *       404:
- *         description: Translation not found
+ *                         photo_url:
+ *                           type: string
+ *                           nullable: true
+ *                         audio_url:
+ *                           type: string
+ *                           nullable: true
+ *       401:
+ *         description: Unauthorized
  *       500:
  *         description: Server error
  */
